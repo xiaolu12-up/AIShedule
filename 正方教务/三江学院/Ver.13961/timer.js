@@ -106,27 +106,27 @@ async function scheduleTimer() {
         showWeekend: false, // 是否显示周末
         forenoon: 4, // 上午课程节数：[1, 10]之间的整数
         afternoon: 4, // 下午课程节数：[0, 10]之间的整数
-        night: 2, // 晚间课程节数：[0, 10]之间的整数
+        night: 0, // 晚间课程节数：[0, 10]之间的整数
         sections: [],
     }
 
     //夏令时配置
     let xJConf = {
-        courseSum: 10,
-        startTime: '830',
+        courseSum: 8,
+        startTime: '820',
         oneCourseTime: 45,
-        longRestingTime: 20,
+        longRestingTime: 15,
         shortRestingTime: 5,
         longRestingTimeBegin: [2, 6],
-        lunchTime: { begin: 4, time: 2 * 60 },
-        dinnerTime: { begin: 8, time: 60 + 30 },
+        lunchTime: { begin: 4, time: 2 * 60 + 15 },
+        // dinnerTime: { begin: 8, time: 60 + 20 },
         // abnormalClassTime: [{ begin: 10, time: 40 }],
-        abnormalRestingTime: [{ begin: 9, time: 10 }]
+        // abnormalRestingTime: [{ begin: 6, time: 10 }]
     }
 
     //冬季时间配置
     let dJConf = {
-        courseSum: 10,
+        courseSum: 12,
         startTime: '830',
         oneCourseTime: 45,
         longRestingTime: 20,
@@ -135,7 +135,7 @@ async function scheduleTimer() {
         lunchTime: { begin: 4, time: 2 * 60 },
         dinnerTime: { begin: 8, time: 60 + 30 },
         // abnormalClassTime: [{ begin: 10, time: 40 }],
-        abnormalRestingTime: [{ begin: 9, time: 10 }]
+        // abnormalRestingTime: [{begin: 11, time: 5}, {begin: 12, time: 5}]
     }
 
     //夏令时时间区间
@@ -144,8 +144,8 @@ async function scheduleTimer() {
         summerEnd: '10/30',
     }
 
-    timeJson.sections = getTimes(xJConf, dJConf, timeRangeConf) //分东夏零时
-    //timeJson.sections = getTimes(xJConf)//不分
+    // timeJson.sections = getTimes(xJConf, dJConf, timeRangeConf) //分东夏零时
+    timeJson.sections = getTimes(xJConf)//不分
 
     if (timeJson.sections.length == 0) timeJson = {}
     return timeJson
