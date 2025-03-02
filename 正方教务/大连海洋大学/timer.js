@@ -99,30 +99,103 @@ function getTimes(
  * 时间配置函数，此为入口函数
  */
 async function scheduleTimer() {
-    let timeJson = {
-        totalWeek: 20, // 总周数：[1, 30]之间的整数
-        startSemester: '', // 开学时间：时间戳，13位长度字符串，推荐用代码生成
-        startWithSunday: false, // 是否是周日为起始日，该选项为true时，会开启显示周末选项
-        showWeekend: false, // 是否显示周末
-        forenoon: 5, // 上午课程节数：[1, 10]之间的整数
-        afternoon: 4, // 下午课程节数：[0, 10]之间的整数
-        night: 0, // 晚间课程节数：[0, 10]之间的整数
-        sections: [],
+    // 这一步为必须，引入代码块
+    await loadTool('AIScheduleTools')
+    const userSelect = await AIScheduleSelect({
+        titleText: '校区', // 标题内容，字体比较大，超过10个字不给显示的喔，也可以不传就不显示
+        contentText: '选择校区导入对应时间列表', // 提示信息，字体稍小，支持使用``达到换行效果，具体使用效果建议真机测试，为必传，不传显示版本号
+        selectList: [
+            '黑石礁校区',
+            '大黑石校区',
+            '瓦房店校区',
+        ], // 选项列表，数组，为必传
+    })
+    console.log(userSelect);
+    let timeJson
+    //夏令时配置
+    let xJConf
+    switch (userSelect) {
+        case '黑石礁校区': {
+            timeJson = {
+                totalWeek: 20, // 总周数：[1, 30]之间的整数
+                startSemester: '', // 开学时间：时间戳，13位长度字符串，推荐用代码生成
+                startWithSunday: false, // 是否是周日为起始日，该选项为true时，会开启显示周末选项
+                showWeekend: false, // 是否显示周末
+                forenoon: 5, // 上午课程节数：[1, 10]之间的整数
+                afternoon: 5, // 下午课程节数：[0, 10]之间的整数
+                night: 3, // 晚间课程节数：[0, 10]之间的整数
+                sections: [],
+            }
+            xJConf = {
+                courseSum: 13,
+                startTime: '800',
+                oneCourseTime: 45,
+                longRestingTime: 15,
+                shortRestingTime: 5,
+                longRestingTimeBegin: [2],
+                lunchTime: { begin: 5, time: 75 },
+                dinnerTime: { begin: 10, time: 50 },
+                // abnormalClassTime: [{ begin: 10, time: 40 }],
+                abnormalRestingTime: [{ begin: 7, time: 10 }]
+            }
+            break;
+        }
+        case '大黑石校区': {
+            timeJson = {
+                totalWeek: 20, // 总周数：[1, 30]之间的整数
+                startSemester: '', // 开学时间：时间戳，13位长度字符串，推荐用代码生成
+                startWithSunday: false, // 是否是周日为起始日，该选项为true时，会开启显示周末选项
+                showWeekend: false, // 是否显示周末
+                forenoon: 5, // 上午课程节数：[1, 10]之间的整数
+                afternoon: 4, // 下午课程节数：[0, 10]之间的整数
+                night: 0, // 晚间课程节数：[0, 10]之间的整数
+                sections: [],
+            }
+            xJConf = {
+                courseSum: 9,
+                startTime: '830',
+                oneCourseTime: 45,
+                longRestingTime: 15,
+                shortRestingTime: 5,
+                longRestingTimeBegin: [2, 5],
+                // lunchTime: { begin: 4, time: 2 * 60 },
+                // dinnerTime: { begin: 8, time: 60 + 30 },
+                // abnormalClassTime: [{ begin: 10, time: 40 }],
+                abnormalRestingTime: [{ begin: 7, time: 10 }]
+            }
+            break;
+        }
+        case '瓦房店校区': {
+            timeJson = {
+                totalWeek: 20, // 总周数：[1, 30]之间的整数
+                startSemester: '', // 开学时间：时间戳，13位长度字符串，推荐用代码生成
+                startWithSunday: false, // 是否是周日为起始日，该选项为true时，会开启显示周末选项
+                showWeekend: false, // 是否显示周末
+                forenoon: 5, // 上午课程节数：[1, 10]之间的整数
+                afternoon: 4, // 下午课程节数：[0, 10]之间的整数
+                night: 0, // 晚间课程节数：[0, 10]之间的整数
+                sections: [],
+            }
+            xJConf = {
+                courseSum: 9,
+                startTime: '800',
+                oneCourseTime: 45,
+                longRestingTime: 20,
+                shortRestingTime: 10,
+                longRestingTimeBegin: [2],
+                lunchTime: { begin: 5, time: 55 },
+                // dinnerTime: { begin: 8, time: 60 + 30 },
+                // abnormalClassTime: [{ begin: 10, time: 40 }],
+                // abnormalRestingTime: [{ begin: 7, time: 10 }]
+            }
+            break;
+        }
+        default:
+            break;
     }
 
-    //夏令时配置
-    let xJConf = {
-        courseSum: 9,
-        startTime: '830',
-        oneCourseTime: 45,
-        longRestingTime: 15,
-        shortRestingTime: 5,
-        longRestingTimeBegin: [2, 5, 7],
-        // lunchTime: { begin: 4, time: 2 * 60 },
-        // dinnerTime: { begin: 8, time: 60 + 30 },
-        // abnormalClassTime: [{ begin: 10, time: 40 }],
-        abnormalRestingTime: [{ begin: 6, time: 10 }]
-    }
+
+
 
     //冬季时间配置
     let dJConf = {
