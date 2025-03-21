@@ -61,57 +61,35 @@ async function scheduleHtmlProvider(
   let htt = null
   let xnm = ''
   let xqm = ''
-  let id = ''
+  let forms = dom.getElementById('ajaxForm')
+  if (!forms) {
+    await AIScheduleAlert(ts)
+    loadd.close()
+    return 'do not continue'
+  }
+  xnm = forms.xnm.value
+  xqm = forms.xqm.value
+  let url = window.location.pathname.split('kbcx')
+  console.log(url);
   try {
-    let forms = dom.getElementById('ajaxForm')
-    xnm = forms.xnm.value
-    xqm = forms.xqm.value
     htt = JSON.parse(
       await request(
         'post',
         'xnm=' + xnm + '&xqm=' + xqm,
-        '/https/77726476706e69737468656265737421fae0428b2232391e79049db9d6562d/kbcx/xskbcx_cxXsgrkb.html'
+        url[0] + 'kbcx/xskbcx_cxXsgrkb.html'
       )
     )
-    loadd.close()
-  } catch (e) {
-    try {
-      let arr = dom
-        .getElementById('cdNav')
-        .outerHTML.match(/(?<=clickMenu\().*?(?=\);)/g)
-      for (i in arr) {
-        if (arr[i].search('学生课表查询') != -1) {
-          id = arr[i].split(',')[0].slice(1, -1)
-          console.log(id)
-          break
-        }
-      }
-      //简写
-      //id = arr.find(v=> v.search("学生课表查询") != -1).split(",")[0].slice(1, -1)
-
-      let su = dom.getElementById('sessionUserKey').value
-      let html = await request(
-        'get',
-        null,
-        '/https/77726476706e69737468656265737421fae0428b2232391e79049db9d6562d/kbcx/xskbcx_cxXskbcxIndex.html?gnmkdm=' + id
+  } catch {
+    const urlParams = new URLSearchParams(window.location.search);
+    htt = JSON.parse(
+      await request(
+        'post',
+        'xnm=' + xnm + '&xqm=' + xqm,
+        url[0] + 'kbcx/jskbcx_cxJsKb1.html?gnmkdm=' + urlParams.get('gnmkdm')
       )
-      dom = new DOMParser().parseFromString(html, 'text/html')
-      let form = dom.getElementById('ajaxForm')
-      xnm = form.xnm.value
-      xqm = form.xqm.value
-      htt = JSON.parse(
-        await request(
-          'post',
-          'xnm=' + xnm + '&xqm=' + xqm,
-          '/https/77726476706e69737468656265737421fae0428b2232391e79049db9d6562d/kbcx/xskbcx_cxXsgrkb.html'
-        )
-      )
-      loadd.close()
-    } catch (e) {
-      loadd.close()
-      await AIScheduleAlert(ts + e)
-    }
+    )
+    console.log(htt);
   }
-  console.log(htt)
+  loadd.close()
   return JSON.stringify({ listArr: htt.kbList, xqm: xqm, xnm: xnm })
 }
