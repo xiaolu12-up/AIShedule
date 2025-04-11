@@ -32,9 +32,7 @@ function scheduleHtmlProvider(
         tag = false
       }
     }
-    // console.log(ifs.length)
     if (tag) {
-      // console.log(ifs.length)
       html = dom.getElementById('kbtable').outerHTML
     }
     return html

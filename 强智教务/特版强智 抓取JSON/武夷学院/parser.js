@@ -1,3 +1,37 @@
+/**
+ * 
+ * @param {*} z {第13-14周}
+ * @param {*} q (全部)
+ * @returns [1,2,3,4...]
+ */
+function parseWeeks(z, q = '全周') {
+    const weekStr = z.replace(/[^\d,\-]/g, '') // 去除非数字/逗号/短横线字符
+    const parts = weekStr.split(',')           // 按逗号分段
+    let tempWeeks = []
+
+    for (const part of parts) {
+        const range = part.split('-').map(Number)
+
+        if (range.length === 2) {
+            // 是范围，如 12-14
+            for (let i = range[0]; i <= range[1]; i++) {
+                if (!q.includes('全')) {
+                    if ((q.includes('单') && i % 2 === 0) || (q.includes('双') && i % 2 === 1)) continue
+                }
+                tempWeeks.push(i)
+            }
+        } else if (range.length === 1) {
+            // 是单个周
+            let i = range[0]
+            if (!q.includes('全')) {
+                if ((q.includes('单') && i % 2 === 0) || (q.includes('双') && i % 2 === 1)) continue
+            }
+            tempWeeks.push(i)
+        }
+    }
+
+    return tempWeeks
+}
 function scheduleHtmlParser(html) {
     let con = JSON.parse(html)
     let list = []
@@ -22,15 +56,7 @@ function scheduleHtmlParser(html) {
             } else
                 tempSections = [...sections]
             // 解析周次
-            let weeks = z.match(/\d+/g).map(Number)
-            let tempWeeks = []
-            if (z.includes('-') && weeks.length > 1) {
-
-                for (let i = weeks[0]; i <= weeks[1]; i++) {
-                    tempWeeks.push(i)
-                }
-            } else
-                tempWeeks = [...weeks]
+            let tempWeeks = parseWeeks(z, q)
             console.log('原始数据', element);
             console.log(`解析数据：\n课程名称:${element.kc_mc}\n上课地点:${tempPosition[index]}\n教师名称:${element.jg0101mc}\n周数:${tempWeeks}\n星期${day}\n节次:${tempSections}`);
             list.push({
