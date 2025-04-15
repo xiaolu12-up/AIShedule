@@ -45,7 +45,8 @@ async function scheduleHtmlProvider(
 ) {
   //除函数名外都可编辑
   //以下为示例，您可以完全重写或在此基础上更改
-  let ts = `导入失败，请联系Q：597576415`
+  let ts = `进入教务系统（主页）点击导入
+  如导入失败，请联系Q：597576415`
   //     alert(ts)
 
   await loadTool('AIScheduleTools')
@@ -54,14 +55,20 @@ async function scheduleHtmlProvider(
   let htt = null
   let xnm = ''
   let xqm = ''
-  let forms = dom.getElementById('area_one')
-  if (!forms) {
-    await AIScheduleAlert(ts)
-    loadd.close()
-    return 'do not continue'
+  try {
+    let forms = dom.getElementById('area_one')
+    xnm = forms.querySelector("#xnm").value
+    xqm = forms.querySelector("#xqm").value
+  } catch {
+    let forms = dom.getElementById('ajaxForm')
+    xnm = forms.xnm.value
+    xqm = forms.xqm.value
+    if (!xnm) {
+      await AIScheduleAlert(ts)
+      loadd.close()
+      return 'do not continue'
+    }
   }
-  xnm = forms.querySelector("#xnm").value
-  xqm = forms.querySelector("#xqm").value
   htt = JSON.parse(
     await request(
       'post',
