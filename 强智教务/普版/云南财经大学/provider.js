@@ -13,39 +13,22 @@ function request(tag, url, data) {
   return ss
 }
 
-function scheduleHtmlProvider(
+async function scheduleHtmlProvider(
   iframeContent = '',
   frameContent = '',
   dom = document
 ) {
-
   let html = ''
-  let tag = true
-  try {
-    let ifs = document.getElementsByTagName('iframe')
-    for (const element of ifs) {
-      const doms = element
-      if (doms.src && doms.src.search('/jsxsd/xskb/xskb_list.do') !== -1) {
-        const currDom = doms.contentDocument
-        html = currDom.getElementById('kbtable')
-          ? currDom.getElementById('kbtable').outerHTML
-          : currDom.getElementsByClassName('content_box')[0].outerHTML
-        tag = false
-      }
-    }
-    // console.log(ifs.length)
-    if (tag) {
-      // console.log(ifs.length)
-      html = dom.getElementById('kbtable').outerHTML
-    }
-    return html
-  } catch (e) {
-    console.error(e)
-
-    let html = request('get', '/jsxsd/xskb/xskb_list.do', null)
-    dom = new DOMParser().parseFromString(html, 'text/html')
-    return dom.getElementById('kbtable')
-      ? dom.getElementById('kbtable').outerHTML
-      : dom.getElementsByClassName('content_box')[0].outerHTML
+  let ts = `进入教务系统（主页）点击导入
+  如导入失败，请联系Q：597576415`
+  await loadTool('AIScheduleTools')
+  html = request('get', '/jsxsd/xskb/xskb_list.do', null)
+  dom = new DOMParser().parseFromString(html, 'text/html')
+  if (!dom.getElementById('kbtable')) {
+    await AIScheduleAlert(ts)
+    return "do not continue"
   }
+  return dom.getElementById('kbtable')
+    ? dom.getElementById('kbtable').outerHTML
+    : dom.getElementsByClassName('content_box')[0].outerHTML
 }
