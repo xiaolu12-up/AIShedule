@@ -45,7 +45,7 @@ async function scheduleHtmlProvider(
 ) {
   //除函数名外都可编辑
   //以下为示例，您可以完全重写或在此基础上更改
-  let ts = `请关闭通知进入教务系统点击导入
+  let ts = `请关闭开屏通知进入教务系统（首页）点击导入
   如导入失败，请联系Q：597576415`
   //     alert(ts)
 
@@ -56,13 +56,25 @@ async function scheduleHtmlProvider(
   let xnm = ''
   let xqm = ''
   let forms = dom.getElementById('area_one')
-  if (!forms) {
+  if (!(forms || dom.getElementById('ajaxForm'))) {
     await AIScheduleAlert(ts)
     loadd.close()
     return 'do not continue'
   }
-  xnm = forms.querySelector("#xnm").value
-  xqm = forms.querySelector("#xqm").value
+  try {
+    let forms = dom.getElementById('area_one')
+    xnm = forms.querySelector("#xnm").value
+    xqm = forms.querySelector("#xqm").value
+  } catch {
+    let forms = dom.getElementById('ajaxForm')
+    xnm = forms.xnm.value
+    xqm = forms.xqm.value
+    if (!xnm) {
+      await AIScheduleAlert(ts)
+      loadd.close()
+      return 'do not continue'
+    }
+  }
   htt = JSON.parse(
     await request(
       'post',
